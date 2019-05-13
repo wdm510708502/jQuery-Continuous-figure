@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document</title>
+<style type="text/css">
+* {
+padding: 0;
+margin: 0;
+}
+ul, ol {
+list-style: none;
+}
+a {
+text-decoration: none;
+}
+.carousel {
+width: 705px;
+height: 400px;
+border: 1px solid #000;
+margin: 50px auto;
+position: relative;
+}
+.carousel .imgs ul li {
+/*呼吸 所有图片摞在一起*/
+width: 900px;
+height: 540px;
+position: absolute;
+left: 0px;
+top: 0px;
+display: none;
+}
+.carousel .imgs ul li:first-child {
+display: block;
+}
+.carousel .btns a {
+position: absolute;
+top: 50%;
+margin-top: -30px;
+width: 30px;
+height: 60px;
+background-color: rgba(0,0,0,.3);
+color: #fff;
+font-size: 30px;
+text-align: center;
+line-height: 60px;
+}
+.carousel .btns a.rightBtn {
+right: 0px;
+}
+.carousel .circles {
+position: absolute;
+width: 200px;
+height: 20px;
+left: 50%;
+margin-left: -100px;
+bottom: 30px;
+overflow: hidden;
+}
+.carousel .circles ol {
+width: 210px;
+}
+.carousel .circles ol li {
+float: left;
+width: 20px;
+height: 20px;
+margin-right: 10px;
+background-color: #eee;
+text-align: center;
+line-height: 20px;
+color: #333;
+border-radius: 10px;
+cursor: pointer;
+}
+.carousel .circles ol li.cur {
+background-color: yellow;
+}
+
+
+</style>
+</head>
+<body>
+<div class="carousel" id="carousel">
+<div class="imgs">
+<ul>
+<li><img src="img/wdm-1.jpg" alt=""></li>
+<li><img src="img/wdm-2.jpg" alt=""></li>
+<li><img src="img/wdm-3.jpg" alt=""></li>
+<li><img src="img/wdm-4.jpg" alt=""></li>
+<li><img src="img/wdm-5.jpg" alt=""></li>
+<li><img src="img/wdm-6.jpg" alt=""></li>
+</ul>
+</div>
+<div class="btns">
+<a href="javascript:void(0);" class="leftBtn" id="leftBtn">&lt;</a>
+<a href="javascript:void(0);" class="rightBtn" id="rightBtn">&gt;</a>
+</div>
+<div class="circles" id="circles">
+<ol>
+<li class="cur">1</li>
+<li>2</li>
+<li>3</li>
+<li>4</li>
+<li>5</li>
+<li>6</li>
+</ol>
+</div>
+</div>
+
+
+<script type="text/javascript" src="jquery-1.12.4.js"></script>
+<script type="text/javascript">
+// 保存元素
+var $carousel = $("#carousel");
+// 获取li们
+var $imgLis = $("#carousel .imgs ul li");
+// 获取小圆点们
+var $circles = $("#circles ol li");
+var $leftBtn = $("#leftBtn");
+var $rightBtn = $("#rightBtn");
+// 数量
+var amount = $circles.length;
+// console.log(amount);
+
+
+// 定时器
+var timer = setInterval(rightBtnFun, 3000);
+// 鼠标进入carousel 停止
+$carousel.mouseenter(function() {
+// 停止timer
+clearInterval(timer);
+});
+// 鼠标离开重新开启
+$carousel.mouseleave(function() {
+// 设表先关
+clearInterval(timer);
+// 重新开启
+timer = setInterval(rightBtnFun, 3000);
+});
+
+
+// 信号量
+var idx = 0;
+// 右按钮点击事件
+// 左右按钮防流氓 图片不运动才接收新任务
+// 可以将匿名函数提取 将函数名书写在小括号
+$rightBtn.click(rightBtnFun);
+// rightBtnFun();
+// 声明右按钮点击事件
+function rightBtnFun() {
+// 图片在运动，什么事情都不做
+if($imgLis.is(":animated")) {
+return;
+}
+// 图片不运动，才会执行这些语句
+// 老图消失
+$imgLis.eq(idx).fadeOut(800);
+// 信号量改变
+idx ++;
+// 验证
+if(idx > amount - 1) {
+idx = 0;
+}
+// 新图淡入
+$imgLis.eq(idx).fadeIn(1000);
+// 小圆点改变
+$circles.eq(idx).addClass("cur").siblings().removeClass("cur");
+}
+
+
+// 左按钮点击事件
+$leftBtn.click(function() {
+// 图片在不运动才接收新任务
+if(!$imgLis.is(":animated")) {
+// 老图淡入
+$imgLis.eq(idx).fadeOut(800);
+// 信号量改变
+idx --;
+if(idx < 0) {
+idx = amount - 1;
+}
+// 新图淡入
+$imgLis.eq(idx).fadeIn(1000);
+// 小圆点改变
+$circles.eq(idx).addClass("cur").siblings().removeClass("cur");
+}
+});
+
+
+
+
+
+
+// 小圆点鼠标进入事件
+// 防流氓 立即触发
+$circles.mouseenter(function() {
+// 老图淡出
+$imgLis.eq(idx).stop(true).fadeOut(800);
+// 信号量改变 $(this)触发 的小圆点
+idx = $(this).index();
+// 新图淡入 stop()方法停止当前动画
+$imgLis.eq(idx).stop(true).fadeIn(1000);
+// 小圆点改变
+$(this).addClass("cur").siblings().removeClass("cur");
+});
+</script>
+</body>
+</html>
